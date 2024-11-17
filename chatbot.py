@@ -14,7 +14,7 @@ nltk.download('averaged_perceptron_tagger_eng')
 
 # Load the markdown file
 markdown_path = "norma_convest2025.md"
-loader = UnstructuredMarkdownLoader(markdown_path, mode="elements")  # Use elements mode if needed
+loader = UnstructuredMarkdownLoader(markdown_path, mode="elements") 
 documents = loader.load()
 
 # Split documents into chunks
@@ -32,7 +32,7 @@ vector_store = Chroma.from_documents(split_documents, embedding=embeddings)
 llm = ChatOpenAI(model="gpt-4o-mini")
 
 # Create a prompt template for the combine_docs_chain
-system_prompt = "What is the main topic of the document? Context: {context}"
+system_prompt = "Responda dúvidas sobre o vestibular da Unicamp 2025. Context: {context}"
 prompt_template = ChatPromptTemplate.from_messages([
     ("system", system_prompt),
     ("human", "{input}")
@@ -42,11 +42,6 @@ prompt_template = ChatPromptTemplate.from_messages([
 combine_docs_chain = create_stuff_documents_chain(llm=llm, prompt=prompt_template)
 rag_chain = create_retrieval_chain(retriever=vector_store.as_retriever(), combine_docs_chain=combine_docs_chain)
 
-query = input()
-try:
-    response = rag_chain.invoke({"input": query})
-    print(response['answer'])
-except KeyError as e:
-    print(f"KeyError: {e} - Verifique se a estrutura do input está correta.")
-except Exception as e:
-    print(f"An error occurred: {e}")
+human_input = input()
+response = rag_chain.invoke({"input": human_input})
+print(response['answer'])
