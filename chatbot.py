@@ -29,7 +29,7 @@ embeddings = OpenAIEmbeddings()
 vector_store = Chroma.from_documents(split_documents, embedding=embeddings)
 
 # Initialize your language model
-llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_base="https://api.openai.com/v1")
+llm = ChatOpenAI(model="gpt-4o-mini")
 
 # Create a prompt template for the combine_docs_chain
 system_prompt = "What is the main topic of the document? Context: {context}"
