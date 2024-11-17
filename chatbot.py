@@ -1,16 +1,11 @@
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAI
-from langchain_openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate 
 from langchain_community.vectorstores.utils import filter_complex_metadata
-from langchain_openai import ChatOpenAI
-import nltk
-
-nltk.download('averaged_perceptron_tagger_eng')
 
 # Load the markdown file
 markdown_path = "norma_convest2025.md"
@@ -20,6 +15,8 @@ documents = loader.load()
 # Split documents into chunks
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 split_documents = text_splitter.split_documents(documents)
+
+# Filter metadata
 split_documents = filter_complex_metadata(split_documents)
 
 # Initialize OpenAI embeddings
@@ -42,6 +39,9 @@ prompt_template = ChatPromptTemplate.from_messages([
 combine_docs_chain = create_stuff_documents_chain(llm=llm, prompt=prompt_template)
 rag_chain = create_retrieval_chain(retriever=vector_store.as_retriever(), combine_docs_chain=combine_docs_chain)
 
-human_input = input()
-response = rag_chain.invoke({"input": human_input})
-print(response['answer'])
+while True:
+    print("----------------------- Digite sua dúvida: -----------------------\n")
+    human_input = input()
+    response = rag_chain.invoke({"input": human_input})
+    print("\n--------------------------- Resposta -----------------------------\n")
+    print(response['answer'], '\n')
