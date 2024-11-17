@@ -1,0 +1,3 @@
+- Versao do python
+- Explicar environment key
+- explicar como rodar e usar o prompt
