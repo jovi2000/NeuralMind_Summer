@@ -1,4 +1,4 @@
-This repository implements an AI-based chatbot to answer questions about the Vestibular Unicamp 2025.
+This repository implements an AI-based chatbot to answer questions about the Vestibular Unicamp 2025. The explanation of implementation and the Chatbot tests  can be found in the [report](https://github.com/jovi2000/NeuralMind_Summer/blob/master/Relatorio.md).
 
 # Instructions for ChatBot Installation
 
