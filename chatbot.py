@@ -1,3 +1,5 @@
+import streamlit
+import nltk
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
@@ -6,6 +8,9 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate 
 from langchain_community.vectorstores.utils import filter_complex_metadata
+
+nltk.download('punkt_tab')
+nltk.download('averaged_perceptron_tagger_eng')
 
 # Load the markdown file
 markdown_path = "norma_convest2025.md"
@@ -39,9 +44,15 @@ prompt_template = ChatPromptTemplate.from_messages([
 combine_docs_chain = create_stuff_documents_chain(llm=llm, prompt=prompt_template)
 rag_chain = create_retrieval_chain(retriever=vector_store.as_retriever(), combine_docs_chain=combine_docs_chain)
 
-while True:
-    print("----------------------- Digite sua dúvida: -----------------------\n")
-    human_input = input()
-    response = rag_chain.invoke({"input": human_input})
-    print("\n--------------------------- Resposta -----------------------------\n")
-    print(response['answer'], '\n')
+# Chatbot interface using Streamlit
+streamlit.title("Chatbot Vestibular Unicamp 2025")
+streamlit.subheader("Tire suas dúvidas sobre o vestibular!")
+
+with streamlit.form("chat_form"):
+    human_input = streamlit.text_input("Digite sua dúvida aqui:")
+    submit_button = streamlit.form_submit_button("Enviar")
+    
+    if submit_button and human_input.strip():
+        with streamlit.spinner("Processando sua pergunta..."):
+            response = rag_chain.invoke({"input": human_input})
+            streamlit.markdown(f"**Resposta:** \n {response['answer']}")

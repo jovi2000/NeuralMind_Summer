@@ -99,7 +99,7 @@ combine_docs_chain = create_stuff_documents_chain(llm=llm, prompt=prompt_templat
 rag_chain = create_retrieval_chain(retriever=vector_store.as_retriever(), combine_docs_chain=combine_docs_chain)
 ```
 
-- `create_stuff_documents_chain:` Essa função cria uma cadeia de combinação que utiliza o modelo de linguagem para gerar respostas baseadas em documentos recuperados. O template de prompt é passado para definir como o modelo deve processar o contexto e as entradas do usuário.
+- `create_stuff_documents_chain:` Cria uma cadeia de combinação que utiliza o modelo de linguagem para gerar respostas baseadas em documentos recuperados. O template de prompt é passado para definir como o modelo deve processar o contexto e as entradas do usuário.
 
 - `create_retrieval_chain:` Configura a cadeia de busca e geração de respostas. O `retriever` é responsável por recuperar os trechos mais relevantes do vector store, enquanto o `combine_docs_chain` organiza esses trechos e os apresenta ao modelo de linguagem para que ele gere uma resposta completa.
 
@@ -110,8 +110,47 @@ O chatbot solicita o input do usuário, que é processado pelo RAG chain (criado
 ```python
 human_input = input()
 response = rag_chain.invoke({"input": human_input})
-print(response['answer'])
+print(response['answer']) ## No código original é usado o Streamlit para mostrar a resposta
 ```
+
+### 6. Implementação da Interface com Streamlit
+
+Para tornar o chatbot mais acessível e interativo, foi implementada uma interface web utilizando o framework Streamlit. Este framework permite que a aplicação seja executada diretamente em um navegador, sem a necessidade de interface por terminal, melhorando a usabilidade do sistema.
+
+Algumas configurações básicas da interface foram feitas da seguinte forma:
+
+```python
+streamlit.title("Chatbot Vestibular Unicamp 2025")
+streamlit.subheader("Tire suas dúvidas sobre o vestibular!")
+human_input = streamlit.text_input("Digite sua dúvida aqui:")
+submit_button = streamlit.form_submit_button("Enviar")
+```
+
+- `title():` Exibe o título da aplicação.
+
+- `subheader():` Adiciona um subtítulo explicativo.
+
+- `text_input():` Permite que o usuário digite sua dúvida e retorna a resposta do usuário.
+
+- `form_submit_button:` Adiciona o botão que permite o envio da pergunta.
+
+Já o **processamento das perguntas e respostas** foi feito da seguinte forma: 
+ao submeter uma pergunta, o texto digitado pelo usuário é processado pela cadeia RAG já configurada no projeto. Para melhorar a experiência do usuário, o Streamlit exibe um spinner enquanto o chatbot processa a resposta.
+
+```python
+if submit_button and human_input.strip():
+    with streamlit.spinner("Processando sua pergunta..."):
+        response = rag_chain.invoke({"input": human_input})
+        streamlit.markdown(f"**Resposta:** \n {response['answer']}")
+```
+
+- `form():` Cria um formulário interativo que inclui a caixa de entrada e o botão de envio.
+
+- `spinner():` Mostra uma animação enquanto o modelo processa a resposta.
+
+### Imagem da interface do Chatbot com Streamlit:
+
+![Interface do chatbot](/images/chatbot_interface.png)
 
 ## Testes e Avaliação
 
@@ -142,12 +181,13 @@ Quais cursos de computação estão disponiveis para inscrição?
 
 ### Resposta:
 ```sh
-Para o vestibular da Unicamp 2025, os cursos de computação disponíveis para inscrição na área de Ciências Exatas/Tecnológicas incluem:
+Na Unicamp, os cursos de computação disponíveis para inscrição são geralmente agrupados na área de Ciências Exatas/Tecnológicas. Os cursos que costumam ser oferecidos nessa área incluem:
 
-1. **Ciência da Computação**
-2. **Engenharia da Computação**
+1. Ciência da Computação
+2. Engenharia de Computação
+3. Sistemas de Informação
 
-Certifique-se de verificar o site oficial da Unicamp ou o edital do vestibular para obter informações atualizadas e detalhadas sobre esses cursos.
+É importante verificar o site oficial da Unicamp ou o edital do vestibular de 2025 para confirmar a lista atualizada dos cursos, pois pode haver alterações ou novos cursos disponíveis.
 ```
 
 ### Avaliação da resposta:
