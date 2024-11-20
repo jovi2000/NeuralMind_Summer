@@ -152,6 +152,22 @@ if submit_button and human_input.strip():
 
 ![Interface do chatbot](/images/chatbot_interface.png)
 
+## 7. Pré-processamento com NLTK
+Foi utilizado o pacote **NLTK (Natural Language Toolkit)**, uma biblioteca  usada para tarefas de Processamento de Linguagem Natural. No caso deste projeto, foram realizados dois downloads específicos de dados linguísticos necessários para a análise e processamento dos textos, que são necessários na primeira vez em que o código é rodado.
+
+```python
+import nltk
+
+nltk.download('punkt_tab')
+nltk.download('averaged_perceptron_tagger_eng')
+```
+
+- `punkt_tab:` O pacote punkt é um tokenizador de frases e palavras. Ele divide um texto em sentenças e, posteriormente, em palavras, o que é essencial para pré-processamento textual. Este pacote foi utilizado, pois durante a criação de embeddings e na segmentação dos documentos em partes menores, é necessário dividir o texto em trechos ou palavras. O punkt fornece as regras necessárias para essa tarefa.
+
+- `averaged_perceptron_tagger_eng:` Este pacote é um etiquetador de partes do discurso (Part-of-Speech Tagging), que atribui rótulos gramaticais às palavras em um texto (como substantivo, verbo, adjetivo etc.). Ele foi utilizado, pois em aplicações avançadas de PLN, essa funcionalidade pode ser útil para refinar a recuperação ou a relevância de partes específicas do texto ao extrair contextos importantes.
+
+- **Observação:** A não utilização desses pacotes durante a primeira execução do código acarreta em erros que sugerem o uso desses pacotes como solução. Por conta disso, o uso do `nltk` é obrigatório durante a primeira execução do código.
+
 ## Testes e Avaliação
 
 Abaixo serão mostrados alguns testes demonstrando perguntas sobre o vestibular da Unicamp 2025 e a reposta que o Chatbot gerou.
